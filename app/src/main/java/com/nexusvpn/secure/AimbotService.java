@@ -66,7 +66,6 @@ public class AimbotService extends Service {
             .setSmallIcon(R.drawable.ic_shield)
             .build();
 
-        // Android 14 (API 34) සහ ඉහළ අනුවාදයන් සඳහා Service Type එක ලබා දීම
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
         } else {
