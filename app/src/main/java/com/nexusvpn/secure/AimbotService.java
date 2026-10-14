@@ -1,5 +1,8 @@
 package com.nexusvpn.secure;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import androidx.core.app.NotificationCompat;
 
 public class AimbotService extends Service {
 
@@ -22,6 +26,7 @@ public class AimbotService extends Service {
     private WindowManager wm;
     private View overlay;
     private boolean aimOn = false;
+    private static final String CHANNEL_ID = "NexusVPNChannel";
 
     public native boolean nativeStart();
     public native void nativeStop();
@@ -34,9 +39,34 @@ public class AimbotService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        // Android පද්ධතිය මඟින් ඇප් එක ක්‍රෑෂ් වීම වැළැක්වීමට නෝටිෆිකේෂන් එක සක්‍රීය කිරීම
+        startForegroundServiceNotification();
+        
         wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         buildOverlay();
         nativeStart();
+    }
+
+    private void startForegroundServiceNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                "NexusVPN Protected Service",
+                NotificationManager.IMPORTANCE_LOW
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("NexusVPN Active")
+            .setContentText("Protected connection is running")
+            .setSmallIcon(R.drawable.ic_shield)
+            .build();
+
+        startForeground(1, notification);
     }
 
     private void buildOverlay() {
