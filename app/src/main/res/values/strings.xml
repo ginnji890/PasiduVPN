@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NexusVPN</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="status_disconnected">Not Connected</string>
+    <string name="status_connecting">Connecting…</string>
+    <string name="status_connected">Protected</string>
+    <string name="server_label">Optimal Server</string>
+    <string name="server_name">Auto • Singapore</string>
+    <string name="speed_label">Speed: 0.0 MB/s</string>
+    <string name="duration_label">00:00:00</string>
+</resources>
