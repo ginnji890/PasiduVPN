@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.graphics.PixelFormat;
 import android.graphics.Color;
 import android.os.Build;
@@ -39,7 +40,6 @@ public class AimbotService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        // Android පද්ධතිය මඟින් ඇප් එක ක්‍රෑෂ් වීම වැළැක්වීමට නෝටිෆිකේෂන් එක සක්‍රීය කිරීම
         startForegroundServiceNotification();
         
         wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
@@ -66,7 +66,12 @@ public class AimbotService extends Service {
             .setSmallIcon(R.drawable.ic_shield)
             .build();
 
-        startForeground(1, notification);
+        // Android 14 (API 34) සහ ඉහළ අනුවාදයන් සඳහා Service Type එක ලබා දීම
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
+        } else {
+            startForeground(1, notification);
+        }
     }
 
     private void buildOverlay() {
