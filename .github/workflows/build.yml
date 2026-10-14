@@ -25,6 +25,9 @@ jobs:
       - name: Set NDK Environment Variable
         run: echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.2.9519653" >> $GITHUB_ENV
 
+      - name: Generate Gradle Wrapper
+        run: gradle wrapper
+
       - name: Build APK with Gradle Wrapper
         run: |
           chmod +x gradlew
