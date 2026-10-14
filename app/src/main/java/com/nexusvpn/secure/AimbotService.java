@@ -11,6 +11,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -60,10 +61,11 @@ public class AimbotService extends Service {
             }
         }
 
+        // Using a safe built-in system icon to prevent resource inflation crashes
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("NexusVPN Active")
             .setContentText("Protected connection is running")
-            .setSmallIcon(R.drawable.ic_shield)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .build();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -74,6 +76,10 @@ public class AimbotService extends Service {
     }
 
     private void buildOverlay() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            return; // Exit safely if overlay permission is missing
+        }
+
         int type = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
             ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             : WindowManager.LayoutParams.TYPE_PHONE;
@@ -105,15 +111,23 @@ public class AimbotService extends Service {
         });
 
         overlay = dot;
-        wm.addView(overlay, lp);
+        try {
+            wm.addView(overlay, lp);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         nativeStop();
-        if (overlay != null) {
-            wm.removeView(overlay);
+        if (overlay != null && wm != null) {
+            try {
+                wm.removeView(overlay);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             overlay = null;
         }
     }
