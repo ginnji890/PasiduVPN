@@ -25,11 +25,7 @@ jobs:
       - name: Set NDK Environment Variable
         run: echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.2.9519653" >> $GITHUB_ENV
 
-      - name: Build APK with Gradle
-        run: gradle assembleDebug --info
-
-      - name: Upload Debug APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Build APK with Gradle Wrapper
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --info
